@@ -5,27 +5,43 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
-  Alert,
   ScrollView,
   StatusBar,
   Image,
   Modal,
 } from 'react-native';
-
 import { useRouter } from 'expo-router';
 
 const LoginScreen = () => {
-  const router = useRouter(); // router for navigation
+  const router = useRouter();
 
   const [name, setName] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const [showSuccessModal, setShowSuccessModal] = useState(false);
-  const [welcomeName, setWelcomeName] = useState('');
+
+  // Modal state
+  const [showModal, setShowModal] = useState(false);
+  const [modalTitle, setModalTitle] = useState('');
+  const [modalMessage, setModalMessage] = useState('');
+  const [isSuccess, setIsSuccess] = useState(false);
+
+  const openModal = (title, message, success = false) => {
+    setModalTitle(title);
+    setModalMessage(message);
+    setIsSuccess(success);
+    setShowModal(true);
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+    if (isSuccess) {
+      router.push('/index'); // go to index if success
+    }
+  };
 
   const handleLogin = async () => {
     if (!name || !password) {
-      Alert.alert('Error', 'Please enter both username and password');
+      openModal('Missing Fields', 'Please enter both username and password.');
       return;
     }
 
@@ -43,27 +59,17 @@ const LoginScreen = () => {
       const data = await response.text();
 
       if (response.ok) {
-        setWelcomeName(name);
-        setShowSuccessModal(true);
+        openModal('Login Successful', `Hi ${name}, you are logged in!`, true);
         setName('');
         setPassword('');
       } else {
-        Alert.alert('Login Failed', data);
+        openModal('Login Failed', data);
       }
     } catch (error) {
-      console.error(error);
-      Alert.alert(
-        'Connection Error',
-        `Cannot reach backend. Error: ${error.message}`
-      );
+      openModal('Connection Error', `Cannot reach backend. ${error.message}`);
     } finally {
       setLoading(false);
     }
-  };
-
-  const closeSuccessModal = () => {
-    setShowSuccessModal(false);
-    router.push('/index'); // navigate to index after closing modal
   };
 
   return (
@@ -75,23 +81,20 @@ const LoginScreen = () => {
       >
         <StatusBar barStyle="light-content" backgroundColor="#37003c" />
 
-        {/* Header with Logo */}
+        {/* Logo Header */}
         <View style={styles.header}>
-          <View style={styles.logoContainer}>
-            <Image
-              source={require('@/assets/images/ppp.jpg')}
-              style={styles.logoImage}
-              resizeMode="contain"
-            />
-          </View>
+          <Image
+            source={require('@/assets/images/ppp.jpg')}
+            style={styles.logoImage}
+            resizeMode="contain"
+          />
         </View>
 
-        {/* Main Content */}
+        {/* Login Form */}
         <View style={styles.content}>
           <Text style={styles.title}>Welcome Back</Text>
           <Text style={styles.subtitle}>myPremierLeague</Text>
 
-          {/* Username Input */}
           <Text style={styles.label}>Username</Text>
           <TextInput
             style={styles.input}
@@ -102,7 +105,6 @@ const LoginScreen = () => {
             autoCapitalize="none"
           />
 
-          {/* Password Input */}
           <Text style={styles.label}>Password</Text>
           <TextInput
             style={styles.input}
@@ -113,7 +115,6 @@ const LoginScreen = () => {
             secureTextEntry
           />
 
-          {/* Login Button */}
           <TouchableOpacity
             style={styles.emailButton}
             onPress={handleLogin}
@@ -126,27 +127,29 @@ const LoginScreen = () => {
         </View>
       </ScrollView>
 
-      {/* Success Modal */}
+      {/* Modal for success/error */}
       <Modal
         animationType="fade"
         transparent={true}
-        visible={showSuccessModal}
-        onRequestClose={closeSuccessModal}
+        visible={showModal}
+        onRequestClose={closeModal}
       >
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
-            <View style={styles.successIconContainer}>
-              <Text style={styles.successIcon}>✓</Text>
-            </View>
-            <Text style={styles.modalTitle}>Login Successful!</Text>
-            <Text style={styles.modalMessage}>
-              Hi {welcomeName}! You have successfully logged in.
-            </Text>
-            <TouchableOpacity
-              style={styles.modalButton}
-              onPress={closeSuccessModal}
+            <View
+              style={[
+                styles.successIconContainer,
+                { backgroundColor: isSuccess ? '#00ff87' : '#ff4d4d' },
+              ]}
             >
-              <Text style={styles.modalButtonText}>Continue</Text>
+              <Text style={styles.successIcon}>{isSuccess ? '✓' : '✖'}</Text>
+            </View>
+            <Text style={styles.modalTitle}>{modalTitle}</Text>
+            <Text style={styles.modalMessage}>{modalMessage}</Text>
+            <TouchableOpacity style={styles.modalButton} onPress={closeModal}>
+              <Text style={styles.modalButtonText}>
+                {isSuccess ? 'Continue' : 'Try Again'}
+              </Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -163,10 +166,8 @@ const styles = StyleSheet.create({
   header: {
     paddingTop: 60,
     paddingBottom: 30,
-    paddingHorizontal: 20,
-  },
-  logoContainer: {
     alignItems: 'flex-start',
+    paddingHorizontal: 20,
   },
   logoImage: {
     width: 180,
@@ -240,7 +241,6 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: '#00ff87',
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 20,
