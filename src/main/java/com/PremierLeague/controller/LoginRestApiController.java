@@ -18,19 +18,25 @@ public class LoginRestApiController {
 
     @PostMapping("/loginbro")
     public ResponseEntity<String> login(@RequestBody PremierLeagueUser loginRequest) {
-        String name = loginRequest.getName(); // or getUsername() if that’s your field
+        
+    	//these elements comes from the jsx point 
+    	String name = loginRequest.getName(); 
+
+
         String inputPassword = loginRequest.getPassword();
 
-        // Hash the password — must match signup hashing method
-        String hashedInputPassword = DigestUtils.md5Hex(inputPassword);
+      
+        String hashPassword = DigestUtils.md5Hex(inputPassword);
 
-        // Check if user exists by name + hashed password
-        boolean userExists = userRepository.existsByNameAndPassword(name, hashedInputPassword);
+        
+        userRepository.existsByNameAndPassword(name, hashPassword);
 
-        if (userExists) {
+        if (userRepository.existsByNameAndPassword(name, hashPassword)) {
             return ResponseEntity.ok("Login successful for user: " + name);
-        } else {
+        } 
+        
+        
             return ResponseEntity.badRequest().body("Invalid username or password");
-        }
+        
     }
 }
