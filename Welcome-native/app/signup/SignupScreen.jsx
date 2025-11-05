@@ -12,6 +12,8 @@ import {
   Modal,
 } from 'react-native';
 
+import { Link } from 'expo-router';
+
 const SignupScreen = () => {
   // State for form fields
   const [email, setEmail] = useState('');
@@ -225,11 +227,13 @@ const SignupScreen = () => {
           </TouchableOpacity>
 
           {/* Footer */}
+          <Link href={"/signup/loginPage"} asChild>
           <TouchableOpacity style={styles.footer}>
             <Text style={styles.footerText}>
               Already have an account? <Text style={styles.signInLink}>Sign in</Text>
             </Text>
           </TouchableOpacity>
+          </Link>
         </View>
       </ScrollView>
 
