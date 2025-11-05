@@ -22,7 +22,7 @@ const LoginScreen = () => {
     setLoading(true);
 
     try {
-      const response = await fetch('http://localhost:8080/api/loginbro', {
+      const response = await fetch('http://localhost:8083/api/loginbro', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -30,7 +30,7 @@ const LoginScreen = () => {
         body: JSON.stringify({ name, password }),
       });
 
-      const data = await response.text(); // backend returns plain text
+      const data = await response.json(); // backend returns plain text
 
       if (response.ok) {
         Alert.alert('Success', data);
