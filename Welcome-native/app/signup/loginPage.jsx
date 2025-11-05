@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
-import { 
-  View, 
-  Text, 
-  TextInput, 
-  Button, 
-  StyleSheet, 
-  Alert 
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  Alert,
+  ScrollView,
+  StatusBar,
+  Image,
 } from 'react-native';
 
 const LoginScreen = () => {
@@ -30,68 +33,174 @@ const LoginScreen = () => {
         body: JSON.stringify({ name, password }),
       });
 
-      const data = await response.json(); // backend returns plain text
+      const data = await response.text();
 
       if (response.ok) {
         Alert.alert('Success', data);
+        // Clear inputs after success
+        setName('');
+        setPassword('');
       } else {
         Alert.alert('Login Failed', data);
       }
     } catch (error) {
       console.error(error);
-      Alert.alert('Error', 'Something went wrong. Please try again.');
+      Alert.alert(
+        'Connection Error',
+        `Cannot reach backend. Error: ${error.message}`
+      );
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Premier League Login</Text>
+    <ScrollView
+      contentContainerStyle={styles.container}
+      keyboardShouldPersistTaps="handled"
+      showsVerticalScrollIndicator={false}
+    >
+      <StatusBar barStyle="light-content" backgroundColor="#37003c" />
 
-      <TextInput
-        style={styles.input}
-        placeholder="Username"
-        value={name}
-        onChangeText={setName}
-      />
+      {/* Header with Logo */}
+      <View style={styles.header}>
+        <View style={styles.logoContainer}>
+          <Image
+            source={require('@/assets/images/ppp.jpg')} // same as signup
+            style={styles.logoImage}
+            resizeMode="contain"
+          />
+        </View>
+      </View>
 
-      <TextInput
-        style={styles.input}
-        placeholder="Password"
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-      />
+      {/* Main Content */}
+      <View style={styles.content}>
+        <Text style={styles.title}>Welcome Back</Text>
+        <Text style={styles.subtitle}>myPremierLeague</Text>
 
-      <Button
-        title={loading ? 'Logging in...' : 'Login'}
-        onPress={handleLogin}
-        disabled={loading}
-      />
-    </View>
+        {/* Username Input */}
+        <Text style={styles.label}>Username</Text>
+        <TextInput
+          style={styles.input}
+          value={name}
+          onChangeText={setName}
+          placeholder="Username"
+          placeholderTextColor="#999"
+          autoCapitalize="none"
+        />
+
+        {/* Password Input */}
+        <Text style={styles.label}>Password</Text>
+        <TextInput
+          style={styles.input}
+          value={password}
+          onChangeText={setPassword}
+          placeholder="Password"
+          placeholderTextColor="#999"
+          secureTextEntry
+        />
+
+        {/* Login Button */}
+        <TouchableOpacity
+          style={styles.emailButton}
+          onPress={handleLogin}
+          disabled={loading}
+        >
+          <Text style={styles.emailButtonText}>
+            {loading ? 'Logging in...' : 'Login'}
+          </Text>
+        </TouchableOpacity>
+
+        {/* Footer */}
+        <TouchableOpacity style={styles.footer}>
+          <Text style={styles.footerText}>
+            Don't have an account?{' '}
+            <Text style={styles.signInLink}>Sign up</Text>
+          </Text>
+        </TouchableOpacity>
+      </View>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    justifyContent: 'center',
+    flexGrow: 1,
+    backgroundColor: '#37003c', // same purple as signup
+  },
+  header: {
+    paddingTop: 60,
+    paddingBottom: 30,
     paddingHorizontal: 20,
-    backgroundColor: '#1a001a',
+  },
+  logoContainer: {
+    alignItems: 'flex-start',
+  },
+  logoImage: {
+    width: 180,
+    height: 60,
+  },
+  content: {
+    flex: 1,
+    paddingHorizontal: 20,
+    paddingTop: 20,
   },
   title: {
-    fontSize: 24,
+    fontSize: 40,
+    fontWeight: 'bold',
+    color: '#fff',
+    marginBottom: 0,
+    letterSpacing: -1,
+  },
+  subtitle: {
+    fontSize: 40,
     fontWeight: 'bold',
     color: '#fff',
     marginBottom: 40,
-    textAlign: 'center',
+    letterSpacing: -1,
+  },
+  label: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#fff',
+    marginBottom: 12,
+    marginTop: 5,
   },
   input: {
-    backgroundColor: '#fff',
-    padding: 12,
-    borderRadius: 8,
+    borderWidth: 2,
+    borderColor: '#fff',
+    backgroundColor: 'transparent',
+    padding: 16,
+    borderRadius: 30,
+    fontSize: 16,
+    color: '#fff',
     marginBottom: 20,
+  },
+  emailButton: {
+    backgroundColor: '#fff',
+    padding: 18,
+    borderRadius: 30,
+    alignItems: 'center',
+    marginBottom: 25,
+    marginTop: 10,
+  },
+  emailButtonText: {
+    color: '#37003c',
+    fontSize: 16,
+    fontWeight: '700',
+  },
+  footer: {
+    paddingVertical: 30,
+    alignItems: 'center',
+  },
+  footerText: {
+    color: '#fff',
+    fontSize: 15,
+    textAlign: 'center',
+  },
+  signInLink: {
+    fontWeight: '700',
+    textDecorationLine: 'underline',
   },
 });
 
