@@ -9,12 +9,19 @@ import {
   ScrollView,
   StatusBar,
   Image,
+  Modal,
 } from 'react-native';
 
+import { useRouter } from 'expo-router';
+
 const LoginScreen = () => {
+  const router = useRouter(); // router for navigation
+
   const [name, setName] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [welcomeName, setWelcomeName] = useState('');
 
   const handleLogin = async () => {
     if (!name || !password) {
@@ -33,11 +40,11 @@ const LoginScreen = () => {
         body: JSON.stringify({ name, password }),
       });
 
-      const data = await response.json();
+      const data = await response.text();
 
       if (response.ok) {
-        Alert.alert('Success', data);
-        // Clear inputs after success
+        setWelcomeName(name);
+        setShowSuccessModal(true);
         setName('');
         setPassword('');
       } else {
@@ -54,79 +61,104 @@ const LoginScreen = () => {
     }
   };
 
+  const closeSuccessModal = () => {
+    setShowSuccessModal(false);
+    router.push('/index'); // navigate to index after closing modal
+  };
+
   return (
-    <ScrollView
-      contentContainerStyle={styles.container}
-      keyboardShouldPersistTaps="handled"
-      showsVerticalScrollIndicator={false}
-    >
-      <StatusBar barStyle="light-content" backgroundColor="#37003c" />
+    <>
+      <ScrollView
+        contentContainerStyle={styles.container}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+      >
+        <StatusBar barStyle="light-content" backgroundColor="#37003c" />
 
-      {/* Header with Logo */}
-      <View style={styles.header}>
-        <View style={styles.logoContainer}>
-          <Image
-            source={require('@/assets/images/ppp.jpg')} // same as signup
-            style={styles.logoImage}
-            resizeMode="contain"
-          />
+        {/* Header with Logo */}
+        <View style={styles.header}>
+          <View style={styles.logoContainer}>
+            <Image
+              source={require('@/assets/images/ppp.jpg')}
+              style={styles.logoImage}
+              resizeMode="contain"
+            />
+          </View>
         </View>
-      </View>
 
-      {/* Main Content */}
-      <View style={styles.content}>
-        <Text style={styles.title}>Welcome Back</Text>
-        <Text style={styles.subtitle}>myPremierLeague</Text>
+        {/* Main Content */}
+        <View style={styles.content}>
+          <Text style={styles.title}>Welcome Back</Text>
+          <Text style={styles.subtitle}>myPremierLeague</Text>
 
-        {/* Username Input */}
-        <Text style={styles.label}>Username</Text>
-        <TextInput
-          style={styles.input}
-          value={name}
-          onChangeText={setName}
-          placeholder="Username"
-          placeholderTextColor="#999"
-          autoCapitalize="none"
-        />
+          {/* Username Input */}
+          <Text style={styles.label}>Username</Text>
+          <TextInput
+            style={styles.input}
+            value={name}
+            onChangeText={setName}
+            placeholder="Username"
+            placeholderTextColor="#999"
+            autoCapitalize="none"
+          />
 
-        {/* Password Input */}
-        <Text style={styles.label}>Password</Text>
-        <TextInput
-          style={styles.input}
-          value={password}
-          onChangeText={setPassword}
-          placeholder="Password"
-          placeholderTextColor="#999"
-          secureTextEntry
-        />
+          {/* Password Input */}
+          <Text style={styles.label}>Password</Text>
+          <TextInput
+            style={styles.input}
+            value={password}
+            onChangeText={setPassword}
+            placeholder="Password"
+            placeholderTextColor="#999"
+            secureTextEntry
+          />
 
-        {/* Login Button */}
-        <TouchableOpacity
-          style={styles.emailButton}
-          onPress={handleLogin}
-          disabled={loading}
-        >
-          <Text style={styles.emailButtonText}>
-            {loading ? 'Logging in...' : 'Login'}
-          </Text>
-        </TouchableOpacity>
+          {/* Login Button */}
+          <TouchableOpacity
+            style={styles.emailButton}
+            onPress={handleLogin}
+            disabled={loading}
+          >
+            <Text style={styles.emailButtonText}>
+              {loading ? 'Logging in...' : 'Login'}
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
 
-        {/* Footer */}
-        <TouchableOpacity style={styles.footer}>
-          <Text style={styles.footerText}>
-            Don't have an account?{' '}
-            <Text style={styles.signInLink}>Sign up</Text>
-          </Text>
-        </TouchableOpacity>
-      </View>
-    </ScrollView>
+      {/* Success Modal */}
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={showSuccessModal}
+        onRequestClose={closeSuccessModal}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <View style={styles.successIconContainer}>
+              <Text style={styles.successIcon}>✓</Text>
+            </View>
+            <Text style={styles.modalTitle}>Login Successful!</Text>
+            <Text style={styles.modalMessage}>
+              Hi {welcomeName}! You have successfully logged in.
+            </Text>
+            <TouchableOpacity
+              style={styles.modalButton}
+              onPress={closeSuccessModal}
+            >
+              <Text style={styles.modalButtonText}>Continue</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+    </>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    backgroundColor: '#37003c', // same purple as signup
+    backgroundColor: '#37003c',
   },
   header: {
     paddingTop: 60,
@@ -189,18 +221,58 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '700',
   },
-  footer: {
-    paddingVertical: 30,
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.7)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  modalContent: {
+    backgroundColor: '#fff',
+    borderRadius: 20,
+    padding: 30,
+    alignItems: 'center',
+    width: '90%',
+    maxWidth: 400,
+  },
+  successIconContainer: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: '#00ff87',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  successIcon: {
+    fontSize: 50,
+    color: '#fff',
+    fontWeight: 'bold',
+  },
+  modalTitle: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: '#37003c',
+    marginBottom: 10,
+  },
+  modalMessage: {
+    fontSize: 18,
+    color: '#333',
+    textAlign: 'center',
+    marginBottom: 30,
+  },
+  modalButton: {
+    backgroundColor: '#37003c',
+    paddingVertical: 16,
+    paddingHorizontal: 40,
+    borderRadius: 30,
     alignItems: 'center',
   },
-  footerText: {
+  modalButtonText: {
     color: '#fff',
-    fontSize: 15,
-    textAlign: 'center',
-  },
-  signInLink: {
+    fontSize: 18,
     fontWeight: '700',
-    textDecorationLine: 'underline',
   },
 });
 

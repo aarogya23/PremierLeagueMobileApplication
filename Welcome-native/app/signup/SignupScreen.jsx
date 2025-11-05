@@ -12,70 +12,108 @@ import {
   Modal,
 } from 'react-native';
 
-import { useRouter } from 'expo-router';
+import { Link } from 'expo-router';
 
-const LoginScreen = () => {
-  const router = useRouter(); // router for navigation
-
+const SignupScreen = () => {
+  // State for form fields
+  const [email, setEmail] = useState('');
   const [name, setName] = useState('');
   const [password, setPassword] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [preferredTeam, setPreferredTeam] = useState('');
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [welcomeName, setWelcomeName] = useState('');
 
-  const handleLogin = async () => {
-    if (!name || !password) {
-      Alert.alert('Error', 'Please enter both username and password');
+  const handleSignup = async () => {
+    console.log('Signup button clicked!');
+    console.log('Form data:', { email, name, password, preferredTeam });
+
+    // Basic validation
+    if (!email || !name || !password || !confirmPassword || !preferredTeam) {
+      Alert.alert('Error', 'Please fill all fields');
+      console.log('Validation failed: Missing fields');
+      return;
+    }
+    if (!email.includes('@')) {
+      Alert.alert('Error', 'Please enter a valid email address');
+      console.log('Validation failed: Invalid email');
+      return;
+    }
+    if (password !== confirmPassword) {
+      Alert.alert('Error', 'Passwords do not match');
+      console.log('Validation failed: Passwords dont match');
+      return;
+    }
+    if (password.length < 6) {
+      Alert.alert('Error', 'Password must be at least 6 characters');
+      console.log('Validation failed: Password too short');
       return;
     }
 
-    setLoading(true);
+    const userData = {
+      name: name,
+      email,
+      password,
+      preferredTeam,
+    };
+
+    console.log('Sending data to backend:', userData);
 
     try {
-      const response = await fetch('http://localhost:8083/api/loginbro', {
+      const response = await fetch('http://localhost:8083/api/signup', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ name, password }),
+        body: JSON.stringify(userData),
       });
 
-      const data = await response.text();
+      console.log('Response status:', response.status);
+      const responseData = await response.json();
+      console.log('Response data:', responseData);
 
       if (response.ok) {
-        setWelcomeName(name);
+        // Show success modal instead of Alert
+        setWelcomeName(responseData.name || name);
         setShowSuccessModal(true);
+        
+        // Clear form after success
+        setEmail('');
         setName('');
         setPassword('');
+        setConfirmPassword('');
+        setPreferredTeam('');
       } else {
-        Alert.alert('Login Failed', data);
+        Alert.alert('Error', `Signup failed: ${responseData.message || 'Unknown error'}`);
       }
     } catch (error) {
-      console.error(error);
+      console.error('Network error:', error);
       Alert.alert(
-        'Connection Error',
-        `Cannot reach backend. Error: ${error.message}`
+        'Connection Error', 
+        `Cannot reach backend. Error: ${error.message}\n\nMake sure:\n1. Backend is running on port 8080\n2. Using correct URL for your device`
       );
-    } finally {
-      setLoading(false);
     }
+  };
+
+  const handleSocialLogin = (provider) => {
+    Alert.alert('Social Login', `Logging in with ${provider}... (Coming soon)`);
   };
 
   const closeSuccessModal = () => {
     setShowSuccessModal(false);
-    router.push('/index'); // navigate to index after closing modal
+    // Navigate to login or home screen here if needed
   };
 
   return (
     <>
-      <ScrollView
-        contentContainerStyle={styles.container}
+      <ScrollView 
+        contentContainerStyle={styles.container} 
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
       >
         <StatusBar barStyle="light-content" backgroundColor="#37003c" />
-
-        {/* Header with Logo */}
+        
+        {/* Premier League Header with Logo */}
         <View style={styles.header}>
           <View style={styles.logoContainer}>
             <Image
@@ -88,18 +126,31 @@ const LoginScreen = () => {
 
         {/* Main Content */}
         <View style={styles.content}>
-          <Text style={styles.title}>Welcome Back</Text>
+          <Text style={styles.title}>Join</Text>
           <Text style={styles.subtitle}>myPremierLeague</Text>
 
-          {/* Username Input */}
-          <Text style={styles.label}>Username</Text>
+          {/* Email Input */}
+          <Text style={styles.label}>Email Address</Text>
+          <TextInput
+            style={styles.input}
+            value={email}
+            onChangeText={setEmail}
+            placeholder="Email Address"
+            placeholderTextColor="#999"
+            keyboardType="email-address"
+            autoCapitalize="none"
+            autoCorrect={false}
+          />
+
+          {/* Name Input */}
+          <Text style={styles.label}>Name</Text>
           <TextInput
             style={styles.input}
             value={name}
             onChangeText={setName}
-            placeholder="Username"
+            placeholder="Name"
             placeholderTextColor="#999"
-            autoCapitalize="none"
+            autoCapitalize="words"
           />
 
           {/* Password Input */}
@@ -113,16 +164,76 @@ const LoginScreen = () => {
             secureTextEntry
           />
 
-          {/* Login Button */}
-          <TouchableOpacity
-            style={styles.emailButton}
-            onPress={handleLogin}
-            disabled={loading}
+          {/* Confirm Password Input */}
+          <Text style={styles.label}>Confirm Password</Text>
+          <TextInput
+            style={styles.input}
+            value={confirmPassword}
+            onChangeText={setConfirmPassword}
+            placeholder="Confirm Password"
+            placeholderTextColor="#999"
+            secureTextEntry
+          />
+
+          {/* Preferred Team Input */}
+          <Text style={styles.label}>Preferred Team</Text>
+          <TextInput
+            style={styles.input}
+            value={preferredTeam}
+            onChangeText={setPreferredTeam}
+            placeholder="Preferred Team"
+            placeholderTextColor="#999"
+          />
+
+          {/* Join with Email Button */}
+          <TouchableOpacity style={styles.emailButton} onPress={handleSignup}>
+            <Text style={styles.emailButtonText}>Join with email</Text>
+          </TouchableOpacity>
+
+          {/* Or Separator */}
+          <Text style={styles.orText}>Or</Text>
+
+          {/* Social Buttons */}
+          <TouchableOpacity 
+            style={styles.socialButton} 
+            onPress={() => handleSocialLogin('Google')}
           >
-            <Text style={styles.emailButtonText}>
-              {loading ? 'Logging in...' : 'Login'}
+            <Text style={styles.socialIcon}>🔵</Text>
+            <Text style={styles.socialText}>Join with Google</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity 
+            style={styles.socialButton} 
+            onPress={() => handleSocialLogin('Facebook')}
+          >
+            <Text style={styles.socialIcon}>📘</Text>
+            <Text style={styles.socialText}>Join with Facebook</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity 
+            style={styles.socialButton} 
+            onPress={() => handleSocialLogin('Apple')}
+          >
+            <Text style={styles.socialIcon}>🍎</Text>
+            <Text style={styles.socialText}>Join with Apple</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity 
+            style={styles.socialButton} 
+            onPress={() => handleSocialLogin('X')}
+          >
+            <Text style={styles.socialIcon}>✖️</Text>
+            <Text style={styles.socialText}>Join with X</Text>
+          </TouchableOpacity>
+
+          {/* Footer */}
+          <Link href={"/signup/loginPage"} asChild>
+          <TouchableOpacity style={styles.footer}>
+            <Text style={styles.footerText}>
+              Already have an account? <Text style={styles.signInLink}>Sign in</Text>
             </Text>
           </TouchableOpacity>
+          </Link>
         </View>
       </ScrollView>
 
@@ -135,18 +246,26 @@ const LoginScreen = () => {
       >
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
+            {/* Success Icon */}
             <View style={styles.successIconContainer}>
               <Text style={styles.successIcon}>✓</Text>
             </View>
-            <Text style={styles.modalTitle}>Login Successful!</Text>
+            
+            {/* Success Message */}
+            <Text style={styles.modalTitle}>Welcome!</Text>
             <Text style={styles.modalMessage}>
-              Hi {welcomeName}! You have successfully logged in.
+              Hi {welcomeName}! Your account has been created successfully.
             </Text>
-            <TouchableOpacity
+            <Text style={styles.modalSubMessage}>
+              You're now part of the myPremierLeague community! 🎉
+            </Text>
+            
+            {/* Close Button */}
+            <TouchableOpacity 
               style={styles.modalButton}
               onPress={closeSuccessModal}
             >
-              <Text style={styles.modalButtonText}>Continue</Text>
+              <Text style={styles.modalButtonText}>Get Started</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -158,7 +277,7 @@ const LoginScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    backgroundColor: '#37003c',
+    backgroundColor: '#37003c', // Official Premier League purple
   },
   header: {
     paddingTop: 60,
@@ -221,9 +340,49 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '700',
   },
+  orText: {
+    color: '#fff',
+    fontSize: 16,
+    textAlign: 'center',
+    marginBottom: 25,
+  },
+  socialButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'transparent',
+    padding: 16,
+    borderRadius: 30,
+    marginBottom: 15,
+    borderWidth: 2,
+    borderColor: '#fff',
+  },
+  socialIcon: {
+    fontSize: 20,
+    marginRight: 10,
+  },
+  socialText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  footer: {
+    paddingVertical: 30,
+    alignItems: 'center',
+  },
+  footerText: {
+    color: '#fff',
+    fontSize: 15,
+    textAlign: 'center',
+  },
+  signInLink: {
+    fontWeight: '700',
+    textDecorationLine: 'underline',
+  },
+  // Modal Styles
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.7)',
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
     justifyContent: 'center',
     alignItems: 'center',
     padding: 20,
@@ -235,6 +394,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: '90%',
     maxWidth: 400,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
   },
   successIconContainer: {
     width: 80,
@@ -260,6 +427,13 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: '#333',
     textAlign: 'center',
+    marginBottom: 10,
+    lineHeight: 24,
+  },
+  modalSubMessage: {
+    fontSize: 16,
+    color: '#666',
+    textAlign: 'center',
     marginBottom: 30,
   },
   modalButton: {
@@ -267,6 +441,7 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
     paddingHorizontal: 40,
     borderRadius: 30,
+    width: '100%',
     alignItems: 'center',
   },
   modalButtonText: {
@@ -276,4 +451,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default LoginScreen;
+export default SignupScreen;
