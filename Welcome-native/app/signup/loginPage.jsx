@@ -33,7 +33,7 @@ const LoginScreen = () => {
         body: JSON.stringify({ name, password }),
       });
 
-      const data = await response.text();
+      const data = await response.json();
 
       if (response.ok) {
         Alert.alert('Success', data);
