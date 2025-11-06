@@ -123,12 +123,32 @@ useEffect(() => {
             </TouchableOpacity>
           </Link>
           {!isLoggedIn && (
-  <Link href={"/signup/SignupScreen"} asChild>
-    <TouchableOpacity style={styles.signInBtn}>
-      <Text style={styles.signInText}>Sign in</Text>
-    </TouchableOpacity>
-  </Link>
-)}
+          <Link href={"/signup/SignupScreen"} asChild>
+            <TouchableOpacity style={styles.signInBtn}>
+              <Text style={styles.signInText}>Sign in</Text>
+            </TouchableOpacity>
+          </Link>
+        )}
+
+
+                  {isLoggedIn ? (
+            <TouchableOpacity
+              style={styles.signInBtn}
+              onPress={async () => {
+                await AsyncStorage.removeItem('isLoggedIn');
+                setIsLoggedIn(false);
+              }}
+            >
+              <Text style={styles.signInText}>Logout</Text>
+            </TouchableOpacity>
+          ) : (
+            <Link href={"/signup/SignupScreen"} asChild>
+              <TouchableOpacity style={styles.signInBtn}>
+                <Text style={styles.signInText}>Sign in</Text>
+              </TouchableOpacity>
+            </Link>
+          )}
+
 
          
         </View>
