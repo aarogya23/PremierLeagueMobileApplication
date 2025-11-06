@@ -13,6 +13,7 @@ import {
 } from 'react-native';
 
 import { Link } from 'expo-router';
+import { Modal } from 'react-native';
 
 const SignupScreen = () => {
   // State for form fields

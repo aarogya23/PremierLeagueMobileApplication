@@ -15,7 +15,7 @@ import {
 import { Link } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-
+import { Modal } from 'react-native';
 const STATUS_BAR_HEIGHT = Platform.OS === 'android' ? StatusBar.currentHeight : 21;
 
 const PremierLeagueOverview = () => {
@@ -138,7 +138,7 @@ useEffect(() => {
     {/* Profile Icon */}
     <TouchableOpacity onPress={() => setShowLogoutModal(true)}>
       <Image
-        source={require('@/assets/images/profile.png')} // 👈 replace with your profile icon
+        source={require('@/assets/images/haa.webp')} // 👈 replace with your profile icon
         style={styles.profileIcon}
       />
     </TouchableOpacity>
@@ -254,4 +254,77 @@ const styles = StyleSheet.create({
   scoreContainer: { alignItems: 'center' },
   score: { color: 'white', fontSize: 16, fontWeight: 'bold' },
   status: { color: '#ccc', fontSize: 12 },
+   profileIcon: {
+    width: 40,             // size of the profile image
+    height: 40,
+    borderRadius: 20,      // makes it round
+    marginLeft: 'auto',    // push to the right in the top bar
+    marginRight: 10,       // spacing from edge
+    borderWidth: 2,        // optional border
+    borderColor: '#fff',   // white border
+    resizeMode: 'cover',   // ensures image scales nicely
+    shadowColor: '#000',   // shadow for iOS
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 3,
+    elevation: 5,          // shadow for Android
+  },
+
+  // ===== Logout Modal =====
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)', // dark semi-transparent background
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+  },
+  modalBox: {
+    backgroundColor: '#1a001a',          // dark modal background
+    padding: 25,
+    borderRadius: 15,
+    width: '80%',
+    alignItems: 'center',
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#fff',
+    textAlign: 'center',
+    marginBottom: 20,
+  },
+  modalButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+  },
+  modalBtn: {
+    flex: 1,
+    paddingVertical: 12,
+    borderRadius: 10,
+    marginHorizontal: 5,
+    alignItems: 'center',
+  },
+  modalBtnText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
+
+  // ===== Sign in Button =====
+  signInBtn: {
+    backgroundColor: '#38003c',
+    borderWidth: 1,
+    borderColor: '#fff',
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+    borderRadius: 15,
+    marginLeft: 'auto',
+    alignItems: 'center',
+  },
+  signInText: {
+    color: 'white',
+    fontWeight: '600',
+    fontSize: 14,
+  },
+
 });
