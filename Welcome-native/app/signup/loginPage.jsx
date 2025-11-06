@@ -32,12 +32,12 @@ const LoginScreen = () => {
     setShowModal(true);
   };
 
-  const closeModal = () => {
-    setShowModal(false);
-    if (isSuccess) {
-      router.push('/index'); // go to index if success
-    }
-  };
+ const closeModal = () => {
+  setShowModal(false);
+  if (isSuccess) {
+     router.replace('/(tabs)'); // ✅ navigate to tab index
+  }
+};
 
   const handleLogin = async () => {
     if (!name || !password) {
@@ -142,10 +142,10 @@ const LoginScreen = () => {
                 { backgroundColor: isSuccess ? '#00ff87' : '#ff4d4d' },
               ]}
             >
-              <Text style={styles.successIcon}>{isSuccess ? '✓' : '✖'}</Text>
+              <Text style={styles.successIcon}>{isSuccess ? 'True' : 'Wrong'}</Text>
             </View>
             <Text style={styles.modalTitle}>{modalTitle}</Text>
-            <Text style={styles.modalMessage}>{modalMessage}</Text>
+            <Text style={styles.modalMessage}>{modalMessage}</Text>s
             <TouchableOpacity style={styles.modalButton} onPress={closeModal}>
               <Text style={styles.modalButtonText}>
                 {isSuccess ? 'Continue' : 'Try Again'}
