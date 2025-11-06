@@ -22,7 +22,7 @@ const PremierLeagueOverview = () => {
   const [news, setNews] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  
+const [showLogoutModal, setShowLogoutModal] = useState(false);
 
 useEffect(() => {
   const checkLoginStatus = async () => {
@@ -31,6 +31,7 @@ useEffect(() => {
   };
   checkLoginStatus();
 }, []);
+
 
 
 useEffect(() => {
@@ -132,23 +133,57 @@ useEffect(() => {
               <Image source={require('@/assets/images/co.webp')} style={styles.copilotIcon} />
             </TouchableOpacity>
           </Link>
-                    {isLoggedIn ? (
+                   {isLoggedIn ? (
+  <>
+    {/* Profile Icon */}
+    <TouchableOpacity onPress={() => setShowLogoutModal(true)}>
+      <Image
+        source={require('@/assets/images/profile.png')} // 👈 replace with your profile icon
+        style={styles.profileIcon}
+      />
+    </TouchableOpacity>
+
+    {/* Logout Modal */}
+    <Modal
+      transparent
+      animationType="fade"
+      visible={showLogoutModal}
+      onRequestClose={() => setShowLogoutModal(false)}
+    >
+      <View style={styles.modalOverlay}>
+        <View style={styles.modalBox}>
+          <Text style={styles.modalTitle}>Are you sure you want to log out?</Text>
+          <View style={styles.modalButtons}>
             <TouchableOpacity
-              style={styles.signInBtn}
+              style={[styles.modalBtn, { backgroundColor: '#38003c' }]}
               onPress={async () => {
                 await AsyncStorage.removeItem('isLoggedIn');
                 setIsLoggedIn(false);
+                setShowLogoutModal(false);
               }}
             >
-              <Text style={styles.signInText}>Logout</Text>
+              <Text style={styles.modalBtnText}>Logout</Text>
             </TouchableOpacity>
-          ) : (
-            <Link href={"/signup/SignupScreen"} asChild>
-              <TouchableOpacity style={styles.signInBtn}>
-                <Text style={styles.signInText}>Sign in</Text>
-              </TouchableOpacity>
-            </Link>
-          )}
+
+            <TouchableOpacity
+              style={[styles.modalBtn, { backgroundColor: '#999' }]}
+              onPress={() => setShowLogoutModal(false)}
+            >
+              <Text style={styles.modalBtnText}>Cancel</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </View>
+    </Modal>
+  </>
+) : (
+  <Link href={"/signup/SignupScreen"} asChild>
+    <TouchableOpacity style={styles.signInBtn}>
+      <Text style={styles.signInText}>Sign in</Text>
+    </TouchableOpacity>
+  </Link>
+)}
+
 
          
         </View>
