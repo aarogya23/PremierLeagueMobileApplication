@@ -11,6 +11,8 @@ import {
   Modal,
 } from 'react-native';
 import { useRouter } from 'expo-router';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 const LoginScreen = () => {
   const router = useRouter();
@@ -59,10 +61,12 @@ const LoginScreen = () => {
       const data = await response.text();
 
       if (response.ok) {
-        openModal('Login Successful', `Hi ${name}, you are logged in!`, true);
-        setName('');
-        setPassword('');
-      } else {
+          await AsyncStorage.setItem('isLoggedIn', 'true'); // ✅ save login status
+          openModal('Login Successful', `Hi ${name}, you are logged in!`, true);
+          setName('');
+          setPassword('');
+        }
+ else {
         openModal('Login Failed', data);
       }
     } catch (error) {
