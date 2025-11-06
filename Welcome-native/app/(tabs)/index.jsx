@@ -258,9 +258,7 @@ const styles = StyleSheet.create({
     width: 40,             // size of the profile image
     height: 40,
     borderRadius: 20,      // makes it round
-    marginLeft: 'auto',    // push to the right in the top bar
-    marginRight: 10,       // spacing from edge
-    borderWidth: 2,        // optional border
+    marginLeft: 150,    // push to the right in the top bar
     borderColor: '#fff',   // white border
     resizeMode: 'cover',   // ensures image scales nicely
     shadowColor: '#000',   // shadow for iOS

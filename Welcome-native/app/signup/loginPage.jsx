@@ -12,7 +12,6 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Modal } from 'react-native';
 
 const LoginScreen = () => {
   const router = useRouter();
