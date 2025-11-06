@@ -22,6 +22,16 @@ const PremierLeagueOverview = () => {
   const [news, setNews] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  
+
+useEffect(() => {
+  const checkLoginStatus = async () => {
+    const loggedIn = await AsyncStorage.getItem('isLoggedIn');
+    setIsLoggedIn(loggedIn === 'true');
+  };
+  checkLoginStatus();
+}, []);
+
 
 useEffect(() => {
   const checkLoginStatus = async () => {
@@ -122,16 +132,7 @@ useEffect(() => {
               <Image source={require('@/assets/images/co.webp')} style={styles.copilotIcon} />
             </TouchableOpacity>
           </Link>
-          {!isLoggedIn && (
-          <Link href={"/signup/SignupScreen"} asChild>
-            <TouchableOpacity style={styles.signInBtn}>
-              <Text style={styles.signInText}>Sign in</Text>
-            </TouchableOpacity>
-          </Link>
-        )}
-
-
-                  {isLoggedIn ? (
+                    {isLoggedIn ? (
             <TouchableOpacity
               style={styles.signInBtn}
               onPress={async () => {
@@ -148,7 +149,6 @@ useEffect(() => {
               </TouchableOpacity>
             </Link>
           )}
-
 
          
         </View>

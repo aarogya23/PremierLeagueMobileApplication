@@ -61,14 +61,14 @@ const LoginScreen = () => {
       const data = await response.text();
 
       if (response.ok) {
-          await AsyncStorage.setItem('isLoggedIn', 'true'); // ✅ save login status
-          openModal('Login Successful', `Hi ${name}, you are logged in!`, true);
-          setName('');
-          setPassword('');
-        }
- else {
-        openModal('Login Failed', data);
+        await AsyncStorage.setItem('isLoggedIn', 'true'); // ✅ save login status
+        openModal('Login Successful', `Hi ${name}, you are logged in!`, true);
+        setName('');
+        setPassword('');
       }
+      else {
+              openModal('Login Failed', data);
+            }
     } catch (error) {
       openModal('Connection Error', `Cannot reach backend. ${error.message}`);
     } finally {
