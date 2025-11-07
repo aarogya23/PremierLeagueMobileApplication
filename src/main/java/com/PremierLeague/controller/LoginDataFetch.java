@@ -14,7 +14,7 @@ import com.PremierLeague.repository.PremierLeagueUserRepository;
 
 @CrossOrigin (origins = "http://localhost:8081")
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/UserData")
 public class LoginDataFetch {
 	
 	
@@ -28,7 +28,7 @@ public class LoginDataFetch {
 	  }
   
   
-  @GetMapping("/allData")
+  @GetMapping
   public List<PremierLeagueUser> all(){
 	  return urepo.findAll();
   }
