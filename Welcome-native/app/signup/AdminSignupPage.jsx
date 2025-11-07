@@ -126,7 +126,7 @@ const AdminSignupScreen = () => {
         {/* Main Content */}
         <View style={styles.content}>
           <Text style={styles.title}>Join</Text>
-          <Text style={styles.subtitle}>myPremierLeague</Text>
+          <Text style={styles.subtitle}>Admin Premier League Login Page</Text>
 
           {/* Email Input */}
           <Text style={styles.label}>Email Address</Text>
@@ -174,57 +174,7 @@ const AdminSignupScreen = () => {
             secureTextEntry
           />
 
-          {/* Preferred Team Input */}
-          <Text style={styles.label}>Preferred Team</Text>
-          <TextInput
-            style={styles.input}
-            value={preferredTeam}
-            onChangeText={setPreferredTeam}
-            placeholder="Preferred Team"
-            placeholderTextColor="#999"
-          />
-
-          {/* Join with Email Button */}
-          <TouchableOpacity style={styles.emailButton} onPress={handleSignup}>
-            <Text style={styles.emailButtonText}>Join with email</Text>
-          </TouchableOpacity>
-
-          {/* Or Separator */}
-          <Text style={styles.orText}>Or</Text>
-
-          {/* Social Buttons */}
-          <TouchableOpacity 
-            style={styles.socialButton} 
-            onPress={() => handleSocialLogin('Google')}
-          >
-            <Text style={styles.socialIcon}>🔵</Text>
-            <Text style={styles.socialText}>Join with Google</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity 
-            style={styles.socialButton} 
-            onPress={() => handleSocialLogin('Facebook')}
-          >
-            <Text style={styles.socialIcon}>📘</Text>
-            <Text style={styles.socialText}>Join with Facebook</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity 
-            style={styles.socialButton} 
-            onPress={() => handleSocialLogin('Apple')}
-          >
-            <Text style={styles.socialIcon}>🍎</Text>
-            <Text style={styles.socialText}>Join with Apple</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity 
-            style={styles.socialButton} 
-            onPress={() => handleSocialLogin('X')}
-          >
-            <Text style={styles.socialIcon}>✖️</Text>
-            <Text style={styles.socialText}>Join with X</Text>
-          </TouchableOpacity>
-
+          
           {/* Footer */}
           <Link href={"/signup/loginPage"} asChild>
           <TouchableOpacity style={styles.footer}>
