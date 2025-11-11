@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
 import {
-  View,
+  Alert,
+  Image,
+  Modal,
+  ScrollView,
+  StatusBar,
+  StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
-  StyleSheet,
-  Alert,
-  ScrollView,
-  StatusBar,
-  Image,
-  Modal,
+  View,
 } from 'react-native';
 
 import { Link } from 'expo-router';
