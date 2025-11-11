@@ -4,6 +4,7 @@ package com.PremierLeague.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import com.PremierLeague.model.AdminModel;
 import com.PremierLeague.model.PremierLeagueUser;
 
 import java.util.Optional;
@@ -17,5 +18,10 @@ public interface PremierLeagueUserRepository extends JpaRepository<PremierLeague
 	boolean existsByNameAndPassword(String name, String password);
 	Optional<PremierLeagueUser> findByEmail(String email);
 	Optional<PremierLeagueUser> findByNameAndPassword(String name, String password);
+	
+	
+	Optional<PremierLeagueUser> findByResetToken(String token);
+
+	
 
 }

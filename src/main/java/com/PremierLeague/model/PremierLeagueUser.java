@@ -13,7 +13,17 @@ public class PremierLeagueUser {
     private String password;
     private String preferredTeam;
 
-    // Default constructor
+    private String resetToken; // Used for password reset
+
+    public String getResetToken() {
+		return resetToken;
+	}
+
+	public void setResetToken(String resetToken) {
+		this.resetToken = resetToken;
+	}
+
+	// Default constructor
     public PremierLeagueUser() {}
 
     // Constructor
