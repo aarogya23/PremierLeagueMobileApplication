@@ -62,7 +62,8 @@ public class PasswordController {
         userRepository.save(user);
 
         return ResponseEntity.ok("Password reset successfully!");
-    }
+    }  
+    
 
     //Send Otp to the respective gmail account
     private void sendOtpEmail(PremierLeagueUser user) {
