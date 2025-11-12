@@ -1,17 +1,19 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import {
-  View,
+  Image,
+  Modal,
+  ScrollView,
+  StatusBar,
+  StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
-  StyleSheet,
-  ScrollView,
-  StatusBar,
-  Image,
-  Modal,
+  View,
 } from 'react-native';
-import { useRouter } from 'expo-router';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+
+import { Link } from 'expo-router';
 
 const LoginScreen = () => {
   const router = useRouter();
@@ -33,12 +35,12 @@ const LoginScreen = () => {
     setShowModal(true);
   };
 
- const closeModal = () => {
-  setShowModal(false);
-  if (isSuccess) {
-     router.replace('/(tabs)'); // ✅ navigate to tab index
-  }
-};
+  const closeModal = () => {
+    setShowModal(false);
+    if (isSuccess) {
+      router.replace('/(tabs)'); // ✅ navigate to tab index
+    }
+  };
 
   const handleLogin = async () => {
     if (!name || !password) {
@@ -64,10 +66,9 @@ const LoginScreen = () => {
         openModal('Login Successful', `Hi ${name}, you are logged in!`, true);
         setName('');
         setPassword('');
+      } else {
+        openModal('Login Failed', data);
       }
-      else {
-              openModal('Login Failed', data);
-            }
     } catch (error) {
       openModal('Connection Error', `Cannot reach backend. ${error.message}`);
     } finally {
@@ -118,6 +119,14 @@ const LoginScreen = () => {
             secureTextEntry
           />
 
+          {/* Forgot Password Button */}
+            <Link href={"/signup/ForgotPasswordScreen"} asChild>
+               <TouchableOpacity style={styles.signInBtn}>
+                 <Text style={styles.signInText}>Sign in</Text>
+               </TouchableOpacity>
+             </Link>
+
+          {/* Login Button */}
           <TouchableOpacity
             style={styles.emailButton}
             onPress={handleLogin}
@@ -145,10 +154,12 @@ const LoginScreen = () => {
                 { backgroundColor: isSuccess ? '#00ff87' : '#ff4d4d' },
               ]}
             >
-              <Text style={styles.successIcon}>{isSuccess ? 'True' : 'Wrong'}</Text>
+              <Text style={styles.successIcon}>
+                {isSuccess ? '✓' : '✕'}
+              </Text>
             </View>
             <Text style={styles.modalTitle}>{modalTitle}</Text>
-            <Text style={styles.modalMessage}>{modalMessage}</Text>s
+            <Text style={styles.modalMessage}>{modalMessage}</Text>
             <TouchableOpacity style={styles.modalButton} onPress={closeModal}>
               <Text style={styles.modalButtonText}>
                 {isSuccess ? 'Continue' : 'Try Again'}
@@ -224,6 +235,16 @@ const styles = StyleSheet.create({
     color: '#37003c',
     fontSize: 16,
     fontWeight: '700',
+  },
+  forgotPasswordContainer: {
+    alignSelf: 'flex-end',
+    marginBottom: 15,
+  },
+  forgotPasswordText: {
+    color: '#ffcc00',
+    fontSize: 14,
+    fontWeight: '600',
+    textDecorationLine: 'underline',
   },
   modalOverlay: {
     flex: 1,

@@ -1,14 +1,14 @@
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import {
-    Modal,
-    ScrollView,
-    StatusBar,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  Modal,
+  ScrollView,
+  StatusBar,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 
 const ForgotPasswordScreen = () => {
@@ -28,11 +28,12 @@ const ForgotPasswordScreen = () => {
   };
 
   const closeModal = () => {
-    setShowModal(false);
-    if (isSuccess) {
-      router.push('/reset-password'); // ✅ Go to reset password page
-    }
-  };
+  setShowModal(false);
+  if (isSuccess) {
+    router.push('/signup/reset-password');
+  }
+};
+
 
   const handleForgotPassword = async () => {
     if (!email) {
