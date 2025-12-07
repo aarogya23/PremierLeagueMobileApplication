@@ -11,7 +11,7 @@
 	<groupId>com.PremierLeague</groupId>
 	<artifactId>PremierLeague-1</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>DeltaGamma-1</name>
+	<name>PremierLeague-1</name>
 	<description>Demo project for Spring Boot</description>
 	<url/>
 	<licenses>

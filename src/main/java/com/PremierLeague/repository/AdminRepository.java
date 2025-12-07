@@ -8,4 +8,7 @@ import com.PremierLeague.model.AdminModel;
 @Repository
 public interface AdminRepository extends JpaRepository<AdminModel, Long> {
 
-}
+	
+	boolean existByUsernameAndPassword(String name, String hashPassword);
+
+   }
